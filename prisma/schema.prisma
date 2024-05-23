@@ -1,0 +1,108 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model AppUserModel {
+  id                String               @default(cuid()) @id
+  profileImage      String?
+  name              String
+  surname           String
+  username          String               @unique
+  email             String              @unique
+  location          String
+  latitude          Float
+  longitude         Float
+  description       String
+  createdCommunity  CommunityModel?
+  organizer        EventModel[]      @relation("EventOrganizers")
+  events  EventModel[] @relation("EventUsers")
+  communities CommunityModel[]     @relation("UserCommunities")
+  comments          CommentModel[]       @relation("UserComments")
+  replies    CommentReplyModel[]  @relation("UserCommentReplies")
+  highlightedImages HighlightedImageModel[] @relation("UserHighlightedImages")
+  interests         String[]
+  favourites        String[]
+  createdAt         DateTime             @default(now()) @map(name: "created_at")
+  updatedAt         DateTime             @updatedAt @map(name: "updated_at")
+
+  @@index([username], name: "username_index")
+}
+
+model CommunityModel {
+  id                String               @default(cuid()) @id
+  owner             AppUserModel         @relation(fields: [ownerId], references: [id])
+  ownerId           String               @unique
+  image             String
+  name              String               @unique
+  members           AppUserModel[]       @relation("UserCommunities")
+  city              String
+  description       String
+  events            EventModel[]         @relation("CommunityEvents")
+  category          String
+}
+
+model HighlightedImageModel {
+  id                String               @default(cuid()) @id
+  user              AppUserModel         @relation("UserHighlightedImages", fields: [userId], references: [id]) // Opposite relation field
+  userId            String
+  event           EventModel           @relation("EventHighlightedImages", fields: [eventId], references: [id])
+  eventId           String
+  image             String
+  createdAt         DateTime             @default(now()) @map(name: "created_at")
+}
+
+model EventModel {
+  id                String               @default(cuid()) @id
+  name              String
+  description       String
+  image   String
+  placeName         String
+  completeAddress   String
+  community         CommunityModel       @relation("CommunityEvents", fields: [communityId], references: [id])
+  communityId       String
+  price             Float?
+  priceWithoutDiscount Float?
+  organizers        AppUserModel[]      @relation("EventOrganizers")
+  latitude          Float
+  longitude         Float
+  photos            String[]
+  comments          CommentModel[]       @relation("EventComments")
+  participants      AppUserModel[]       @relation("EventUsers")
+  eventType         String
+  popular           Boolean
+  highlightedImages HighlightedImageModel[] @relation("EventHighlightedImages")
+  startTimestamp    DateTime
+  endTimestamp    DateTime
+  createdAt         DateTime             @default(now()) @map(name: "created_at")
+  updatedAt         DateTime             @updatedAt @map(name: "updated_at")
+}
+
+model CommentModel {
+  id                String               @default(cuid()) @id
+  creator           AppUserModel         @relation("UserComments", fields: [creatorId], references: [id])
+  creatorId         String
+  event             EventModel           @relation("EventComments", fields: [eventId], references: [id])
+  eventId           String
+  comment           String
+  likes             Int                  @default(0)
+  replies           CommentReplyModel[]
+  createdAt         DateTime             @default(now()) @map(name: "created_at")
+}
+
+model CommentReplyModel {
+  id                String               @default(cuid()) @id
+  parentComment     CommentModel         @relation(fields: [parentCommentId], references: [id])
+  parentCommentId   String
+  creator           AppUserModel         @relation("UserCommentReplies", fields: [creatorId], references: [id])
+  creatorId         String
+  comment           String
+  likes             Int
+}
