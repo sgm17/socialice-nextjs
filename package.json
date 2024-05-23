@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node server.js",
+    "build": "node server.js",
     "start": "next start",
     "lint": "next lint",
     "seed": "ts-node --transpile-only prisma/seed.ts"
@@ -15,7 +15,8 @@
     "next": "14.2.3",
     "next-auth": "^4.24.7",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -25,5 +26,6 @@
     "eslint-config-next": "14.2.3",
     "prisma": "^5.13.0",
     "typescript": "^5"
-  }
+  },
+  "type": "module"
 }

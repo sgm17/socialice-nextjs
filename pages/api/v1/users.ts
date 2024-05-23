@@ -6,13 +6,41 @@ const prisma = new PrismaClient();
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { id } = req.query;
 
+    if (req.method === "PUT") {
+        try {
+            const { name, surname, username, description, profileImage, location, latitude, longitude } = req.body;
 
+            const updatedUser = await prisma.appUserModel.update({
+                where: { id: "1" },
+                data: {
+                    name: name,
+                    surname: surname,
+                    username: username,
+                    description: description,
+                    profileImage: profileImage,
+                    location: location,
+                    latitude: latitude,
+                    longitude: longitude
+                },
+                include: {
+                    communities: true
+                }
+            });
+            return res.status(200).json(updatedUser);
+        } catch (error) {
+            return res.status(500).json({ error: 'Failed to update the user' });
+
+        }
+    }
 
     try {
         if (!id) {
             return res.status(200).json(await prisma.appUserModel.findUnique({
                 where: {
                     id: "1"
+                },
+                include: {
+                    communities: true,
                 }
             }))
         }
