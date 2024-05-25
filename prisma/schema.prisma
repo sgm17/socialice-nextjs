@@ -12,15 +12,16 @@ datasource db {
 
 model AppUserModel {
   id                String               @default(cuid()) @id
+  uid               String
   profileImage      String?
   name              String
   surname           String
   username          String               @unique
-  email             String              @unique
+  email             String               @unique
   location          String
   latitude          Float
   longitude         Float
-  description       String
+  description       String?
   createdCommunity  CommunityModel?
   organizer        EventModel[]      @relation("EventOrganizers")
   events  EventModel[] @relation("EventUsers")
@@ -74,10 +75,10 @@ model EventModel {
   latitude          Float
   longitude         Float
   photos            String[]
-  comments          CommentModel[]       @relation("EventComments")
+  comments          CommentModel[]       @relation("EventComments") 
   participants      AppUserModel[]       @relation("EventUsers")
   eventType         String
-  popular           Boolean
+  popular           Boolean             @default(false)
   highlightedImages HighlightedImageModel[] @relation("EventHighlightedImages")
   startTimestamp    DateTime
   endTimestamp    DateTime
@@ -92,7 +93,7 @@ model CommentModel {
   event             EventModel           @relation("EventComments", fields: [eventId], references: [id])
   eventId           String
   comment           String
-  likes             Int                  @default(0)
+  likes             String[]                  
   replies           CommentReplyModel[]
   createdAt         DateTime             @default(now()) @map(name: "created_at")
 }
@@ -104,5 +105,5 @@ model CommentReplyModel {
   creator           AppUserModel         @relation("UserCommentReplies", fields: [creatorId], references: [id])
   creatorId         String
   comment           String
-  likes             Int
+  likes             String[]                  
 }
