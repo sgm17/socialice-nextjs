@@ -28,13 +28,19 @@ model AppUserModel {
   communities CommunityModel[]     @relation("UserCommunities")
   comments          CommentModel[]       @relation("UserComments")
   replies    CommentReplyModel[]  @relation("UserCommentReplies")
-  highlightedImages HighlightedImageModel[] @relation("UserHighlightedImages")
-  interests         String[]
+  highlights HighlightModel[] @relation("EventHighlights")
+  interests         InterestModel[] @relation("UserInterests")
   favourites        String[]
   createdAt         DateTime             @default(now()) @map(name: "created_at")
   updatedAt         DateTime             @updatedAt @map(name: "updated_at")
 
   @@index([username], name: "username_index")
+}
+
+model InterestModel {
+  id                String               @default(cuid()) @id
+  name              String               @unique
+  users             AppUserModel[]       @relation("UserInterests")
 }
 
 model CommunityModel {
@@ -47,14 +53,23 @@ model CommunityModel {
   city              String
   description       String
   events            EventModel[]         @relation("CommunityEvents")
-  category          String
+  category          CategoryModel        @relation(fields: [categoryId], references: [id])
+  categoryId        String
+  createdAt         DateTime             @default(now()) @map(name: "created_at")
 }
 
-model HighlightedImageModel {
+model CategoryModel {
   id                String               @default(cuid()) @id
-  user              AppUserModel         @relation("UserHighlightedImages", fields: [userId], references: [id]) // Opposite relation field
+  name              String               @unique
+  image             String
+  community         CommunityModel[]
+}
+
+model HighlightModel {
+  id                String               @default(cuid()) @id
+  user              AppUserModel         @relation("EventHighlights", fields: [userId], references: [id])
   userId            String
-  event           EventModel           @relation("EventHighlightedImages", fields: [eventId], references: [id])
+  event             EventModel           @relation("EventHighlights", fields: [eventId], references: [id])
   eventId           String
   image             String
   createdAt         DateTime             @default(now()) @map(name: "created_at")
@@ -74,14 +89,14 @@ model EventModel {
   organizers        AppUserModel[]      @relation("EventOrganizers")
   latitude          Float
   longitude         Float
-  photos            String[]
   comments          CommentModel[]       @relation("EventComments") 
   participants      AppUserModel[]       @relation("EventUsers")
   eventType         String
   popular           Boolean             @default(false)
-  highlightedImages HighlightedImageModel[] @relation("EventHighlightedImages")
+  highlights        HighlightModel[]    @relation("EventHighlights")
+  reports           String[]
   startTimestamp    DateTime
-  endTimestamp    DateTime
+  endTimestamp      DateTime
   createdAt         DateTime             @default(now()) @map(name: "created_at")
   updatedAt         DateTime             @updatedAt @map(name: "updated_at")
 }
@@ -105,5 +120,6 @@ model CommentReplyModel {
   creator           AppUserModel         @relation("UserCommentReplies", fields: [creatorId], references: [id])
   creatorId         String
   comment           String
-  likes             String[]                  
+  likes             String[]
+  createdAt         DateTime             @default(now()) @map(name: "created_at")                 
 }

@@ -18,6 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     include: {
                         owner: true,
                         members: true,
+                        category: true
                     }
                 })
                 res.status(200).json(communities)
@@ -27,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             break;
         case "POST":
             try {
-                const { image, name, city, description, category } = req.body
+                const { image, name, city, description, categoryId } = req.body
 
                 let community = await prisma.communityModel.create({
                     data: {
@@ -38,7 +39,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         city: city,
                         description: description,
                         events: { create: [] },
-                        category: category
+                        categoryId: categoryId
+                    },
+                    include: {
+                        owner: true,
+                        members: true,
+                        category: true
                     }
                 })
                 res.status(200).json(community)
@@ -47,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         case "PUT":
             try {
-                const { id, image, name, city, description, category } = req.body
+                const { id, image, name, city, description, categoryId } = req.body
 
                 let community = await prisma.communityModel.update({
                     where: { id: id },
@@ -55,8 +61,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         name: name,
                         description: description,
                         city: city,
-                        category: category,
+                        categoryId: categoryId,
                         image: image,
+                    },
+                    include: {
+                        owner: true,
+                        members: true,
+                        category: true
                     }
                 })
                 res.status(200).json(community)
@@ -69,6 +80,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 let community = await prisma.communityModel.delete({
                     where: { id: id },
+                    include: {
+                        owner: true,
+                        members: true,
+                        category: true
+                    }
                 })
                 res.status(200).json(community)
             } catch (e) {

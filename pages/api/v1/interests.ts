@@ -12,6 +12,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
 
     switch (req.method) {
+        case "GET":
+            try {
+                let interests = await prisma.interestModel.findMany({})
+                res.status(200).json(interests)
+            } catch (e) {
+                res.status(500).json({ message: "Something has gone wrong when retrieving the interests of the user", error: e })
+            }
+            break
         case "PUT":
             try {
                 let { interests } = req.body

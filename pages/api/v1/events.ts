@@ -10,14 +10,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 let events = await prisma.eventModel.findMany({
                     include: {
                         organizers: true,
+                        participants: true,
                         community: {
                             include: {
-                                owner: true
+                                owner: true,
+                                members: true,
+                                category: true,
                             }
                         },
-                        comments: true,
-                        participants: true,
-                        highlightedImages: true
+                        comments: {
+                            include: {
+                                creator: true,
+                                replies: {
+                                    include: {
+                                        creator: true
+                                    }
+                                },
+                                event: {
+                                    select: { id: true }
+                                }
+                            }
+                        },
+                        highlights: {
+                            include: { user: true },
+                        }
                     }
                 })
                 res.status(200).json(events)
@@ -30,17 +46,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const { name, description, image, placeName, completeAddress, communityId, startTimestamp, endTimestamp, latitude, longitude, price, priceWithoutDiscount, eventType } = req.body
 
                 let event = await prisma.eventModel.create({
-                    include: {
-                        organizers: true,
-                        community: {
-                            include: {
-                                owner: true
-                            }
-                        },
-                        comments: true,
-                        participants: true,
-                        highlightedImages: true
-                    },
                     data: {
                         name: name,
                         description: description,
@@ -53,14 +58,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         organizers: { create: [] },
                         latitude: latitude,
                         longitude: longitude,
-                        photos: [],
                         comments: { create: [] },
                         participants: { create: [] },
                         eventType: eventType,
                         popular: false,
-                        highlightedImages: { create: [] },
+                        highlights: { create: [] },
                         startTimestamp: startTimestamp,
                         endTimestamp: endTimestamp,
+                    },
+                    include: {
+                        organizers: true,
+                        participants: true,
+                        community: {
+                            include: {
+                                owner: true,
+                                members: true,
+                                category: true,
+                            }
+                        },
+                        comments: {
+                            include: {
+                                creator: true,
+                                replies: {
+                                    include: {
+                                        creator: true
+                                    }
+                                },
+                                event: {
+                                    select: { id: true }
+                                }
+                            }
+                        },
+                        highlights: {
+                            include: { user: true },
+                        }
                     }
                 })
                 res.status(200).json(event)
@@ -74,17 +105,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 let event = await prisma.eventModel.update({
                     where: { id: id },
-                    include: {
-                        organizers: true,
-                        community: {
-                            include: {
-                                owner: true
-                            }
-                        },
-                        comments: true,
-                        participants: true,
-                        highlightedImages: true
-                    },
                     data: {
                         name: name,
                         description: description,
@@ -98,6 +118,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         startTimestamp: startTimestamp,
                         endTimestamp: endTimestamp,
                         eventType: eventType
+                    },
+                    include: {
+                        organizers: true,
+                        participants: true,
+                        community: {
+                            include: {
+                                owner: true,
+                                members: true,
+                                category: true,
+                            }
+                        },
+                        comments: {
+                            include: {
+                                creator: true,
+                                replies: {
+                                    include: {
+                                        creator: true
+                                    }
+                                },
+                                event: {
+                                    select: { id: true }
+                                }
+                            }
+                        },
+                        highlights: {
+                            include: { user: true },
+                        }
                     }
                 })
                 res.status(200).json(event)

@@ -23,6 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         },
                         include: {
                             communities: true,
+                            interests: true
                         }
                     })
                     res.status(200).json(appUser)
@@ -37,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         },
                         include: {
                             communities: true,
+                            interests: true
                         }
                     })
                     res.status(200).json(appUser)
@@ -61,7 +63,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         longitude: longitude
                     },
                     include: {
-                        communities: true
+                        communities: true,
+                        interests: true
                     }
                 })
                 res.status(200).json(appUser)
@@ -87,7 +90,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         longitude: longitude
                     },
                     include: {
-                        communities: true
+                        communities: true,
+                        interests: true
                     }
                 })
                 res.status(200).json(updatedUser)
@@ -101,7 +105,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await prisma.appUserModel.delete({
                     where: { id: user!.id },
                     include: {
-                        communities: true
+                        communities: true,
+                        interests: true
                     }
                 })
                 res.status(200)
