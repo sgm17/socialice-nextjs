@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 let { eventId, image } = req.body
                 const userId = user.id
 
-                let highlightedImage = await prisma.highlightedImageModel.create({
+                let highlightedImage = await prisma.highlightModel.create({
                     data: {
                         eventId: eventId,
                         userId: userId,
