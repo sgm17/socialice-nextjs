@@ -24,6 +24,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         comment: comment,
                         replies: { create: [] },
                         likes: []
+                    },
+                    include: {
+                        creator: true,
+                        replies: {
+                            include: {
+                                creator: true
+                            }
+                        },
                     }
                 })
                 res.status(200).json(createdComment)
@@ -34,22 +42,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         case "PUT":
             try {
                 let { id } = req.body
+                const userId = user.id
 
                 let oldComment = await prisma.commentModel.findUniqueOrThrow({
-                    where: { id: id }
+                    where: { id: id },
+                    select: { likes: true }
                 })
 
-                const userId = user.id
                 const likes = oldComment.likes.includes(userId)
                     ? oldComment.likes.filter(like => like !== userId)
                     : [userId, ...oldComment.likes];
 
-                let updatedComment = await prisma.commentModel.update({
-                    where: { id: id },
-                    data: {
-                        likes: likes
-                    }
+                await prisma.commentModel.update({
+                    where: { id },
+                    data: { likes },
                 })
+
+                const updatedComment = await prisma.commentModel.findUniqueOrThrow({
+                    where: { id: id },
+                    include: {
+                        creator: true,
+                        replies: {
+                            include: {
+                                creator: true
+                            }
+                        }
+                    }
+                });
                 res.status(200).json(updatedComment)
             } catch (e) {
                 res.status(500).json({ message: "Something has gone wrong when updating the likes of the event", error: e })

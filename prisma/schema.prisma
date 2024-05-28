@@ -110,6 +110,7 @@ model CommentModel {
   comment           String
   likes             String[]                  
   replies           CommentReplyModel[]
+  reports           String[]
   createdAt         DateTime             @default(now()) @map(name: "created_at")
 }
 
@@ -121,5 +122,6 @@ model CommentReplyModel {
   creatorId         String
   comment           String
   likes             String[]
+  reports           String[]
   createdAt         DateTime             @default(now()) @map(name: "created_at")                 
 }

@@ -14,38 +14,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (req.method) {
         case "PUT":
             try {
-                const { eventId } = req.body
+                let { eventId } = req.body
                 const userId = user.id
 
-                const event = await prisma.eventModel.findUniqueOrThrow({
+                let event = await prisma.eventModel.findFirstOrThrow({
+                    where: { id: eventId }
+                })
+
+                let updatedEventModel = await prisma.eventModel.update({
                     where: { id: eventId },
-                    include: { participants: true },
-                });
-
-                // Determine whether to add or remove the user
-                const isParticipant = event.participants.some(participant => participant.id === userId);
-                let updateData;
-
-                if (isParticipant) {
-                    // Remove the user from members
-                    updateData = {
-                        participants: {
-                            disconnect: { id: userId },
-                        },
-                    };
-                } else {
-                    // Add the user to participants
-                    updateData = {
-                        participants: {
-                            connect: { id: userId },
-                        },
-                    };
-                }
-
-                // Perform the update
-                const updatedEvent = await prisma.eventModel.update({
-                    where: { id: eventId },
-                    data: updateData,
+                    data: {
+                        reports: {
+                            set: [userId, ...event.reports]
+                        }
+                    },
                     include: {
                         organizers: true,
                         participants: true,
@@ -73,11 +55,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             include: { user: true },
                         }
                     }
-                });
-
-                res.status(200).json(updatedEvent);
+                })
+                res.status(200).json(updatedEventModel)
             } catch (e) {
-                res.status(500).json({ message: "Something has gone wrong when updating the participants of the event", error: e })
+                res.status(500).json({ message: "Something has gone wrong when updating the favourites of the user", error: e })
             }
             break
         default:

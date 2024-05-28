@@ -25,15 +25,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 let { interests } = req.body
                 const userId = user.id
 
+                let interestIds = interests.map((e: any) => ({ id: e.id }))
+
                 let updatedAppUserModel = await prisma.appUserModel.update({
                     where: { id: userId },
                     data: {
-                        interests: { set: interests }
+                        interests: { set: interestIds }
                     },
-                    include: { communities: true }
+                    include: {
+                        communities: true,
+                        interests: true
+                    }
                 })
                 res.status(200).json(updatedAppUserModel)
             } catch (e) {
+                console.log(e)
                 res.status(500).json({ message: "Something has gone wrong when updating the interests of the user", error: e })
             }
         default:
