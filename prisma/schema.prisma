@@ -116,11 +116,11 @@ model CommentModel {
 
 model CommentReplyModel {
   id                String               @default(cuid()) @id
-  parentComment     CommentModel         @relation(fields: [parentCommentId], references: [id])
-  parentCommentId   String
+  comment     CommentModel         @relation(fields: [commentId], references: [id])
+  commentId   String
   creator           AppUserModel         @relation("UserCommentReplies", fields: [creatorId], references: [id])
   creatorId         String
-  comment           String
+  commentReply           String
   likes             String[]
   reports           String[]
   createdAt         DateTime             @default(now()) @map(name: "created_at")                 

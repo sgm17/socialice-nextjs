@@ -22,8 +22,73 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             id: id
                         },
                         include: {
+                            createdCommunity: {
+                                include: {
+                                    owner: true,
+                                    members: true,
+                                    category: true
+                                }
+                            },
                             communities: true,
-                            interests: true
+                            interests: true,
+                            organizer: {
+                                include: {
+                                    organizers: true,
+                                    participants: true,
+                                    community: {
+                                        include: {
+                                            owner: true,
+                                            members: true,
+                                            category: true,
+                                        }
+                                    },
+                                    comments: {
+                                        include: {
+                                            creator: true,
+                                            replies: {
+                                                include: {
+                                                    creator: true
+                                                }
+                                            },
+                                            event: {
+                                                select: { id: true }
+                                            }
+                                        }
+                                    },
+                                    highlights: {
+                                        include: { user: true },
+                                    }
+                                }
+                            },
+                            events: {
+                                include: {
+                                    organizers: true,
+                                    participants: true,
+                                    community: {
+                                        include: {
+                                            owner: true,
+                                            members: true,
+                                            category: true,
+                                        }
+                                    },
+                                    comments: {
+                                        include: {
+                                            creator: true,
+                                            replies: {
+                                                include: {
+                                                    creator: true
+                                                }
+                                            },
+                                            event: {
+                                                select: { id: true }
+                                            }
+                                        }
+                                    },
+                                    highlights: {
+                                        include: { user: true },
+                                    }
+                                }
+                            }
                         }
                     })
                     res.status(200).json(appUser)
@@ -37,8 +102,73 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             id: user!.id
                         },
                         include: {
+                            createdCommunity: {
+                                include: {
+                                    owner: true,
+                                    members: true,
+                                    category: true
+                                }
+                            },
                             communities: true,
-                            interests: true
+                            interests: true,
+                            organizer: {
+                                include: {
+                                    organizers: true,
+                                    participants: true,
+                                    community: {
+                                        include: {
+                                            owner: true,
+                                            members: true,
+                                            category: true,
+                                        }
+                                    },
+                                    comments: {
+                                        include: {
+                                            creator: true,
+                                            replies: {
+                                                include: {
+                                                    creator: true
+                                                }
+                                            },
+                                            event: {
+                                                select: { id: true }
+                                            }
+                                        }
+                                    },
+                                    highlights: {
+                                        include: { user: true },
+                                    }
+                                }
+                            },
+                            events: {
+                                include: {
+                                    organizers: true,
+                                    participants: true,
+                                    community: {
+                                        include: {
+                                            owner: true,
+                                            members: true,
+                                            category: true,
+                                        }
+                                    },
+                                    comments: {
+                                        include: {
+                                            creator: true,
+                                            replies: {
+                                                include: {
+                                                    creator: true
+                                                }
+                                            },
+                                            event: {
+                                                select: { id: true }
+                                            }
+                                        }
+                                    },
+                                    highlights: {
+                                        include: { user: true },
+                                    }
+                                }
+                            }
                         }
                     })
                     res.status(200).json(appUser)
@@ -63,8 +193,73 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         longitude: longitude
                     },
                     include: {
+                        createdCommunity: {
+                            include: {
+                                owner: true,
+                                members: true,
+                                category: true
+                            }
+                        },
                         communities: true,
-                        interests: true
+                        interests: true,
+                        organizer: {
+                            include: {
+                                organizers: true,
+                                participants: true,
+                                community: {
+                                    include: {
+                                        owner: true,
+                                        members: true,
+                                        category: true,
+                                    }
+                                },
+                                comments: {
+                                    include: {
+                                        creator: true,
+                                        replies: {
+                                            include: {
+                                                creator: true
+                                            }
+                                        },
+                                        event: {
+                                            select: { id: true }
+                                        }
+                                    }
+                                },
+                                highlights: {
+                                    include: { user: true },
+                                }
+                            }
+                        },
+                        events: {
+                            include: {
+                                organizers: true,
+                                participants: true,
+                                community: {
+                                    include: {
+                                        owner: true,
+                                        members: true,
+                                        category: true,
+                                    }
+                                },
+                                comments: {
+                                    include: {
+                                        creator: true,
+                                        replies: {
+                                            include: {
+                                                creator: true
+                                            }
+                                        },
+                                        event: {
+                                            select: { id: true }
+                                        }
+                                    }
+                                },
+                                highlights: {
+                                    include: { user: true },
+                                }
+                            }
+                        }
                     }
                 })
                 res.status(200).json(appUser)
@@ -90,8 +285,73 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         longitude: longitude
                     },
                     include: {
+                        createdCommunity: {
+                            include: {
+                                owner: true,
+                                members: true,
+                                category: true
+                            }
+                        },
                         communities: true,
-                        interests: true
+                        interests: true,
+                        organizer: {
+                            include: {
+                                organizers: true,
+                                participants: true,
+                                community: {
+                                    include: {
+                                        owner: true,
+                                        members: true,
+                                        category: true,
+                                    }
+                                },
+                                comments: {
+                                    include: {
+                                        creator: true,
+                                        replies: {
+                                            include: {
+                                                creator: true
+                                            }
+                                        },
+                                        event: {
+                                            select: { id: true }
+                                        }
+                                    }
+                                },
+                                highlights: {
+                                    include: { user: true },
+                                }
+                            }
+                        },
+                        events: {
+                            include: {
+                                organizers: true,
+                                participants: true,
+                                community: {
+                                    include: {
+                                        owner: true,
+                                        members: true,
+                                        category: true,
+                                    }
+                                },
+                                comments: {
+                                    include: {
+                                        creator: true,
+                                        replies: {
+                                            include: {
+                                                creator: true
+                                            }
+                                        },
+                                        event: {
+                                            select: { id: true }
+                                        }
+                                    }
+                                },
+                                highlights: {
+                                    include: { user: true },
+                                }
+                            }
+                        }
                     }
                 })
                 res.status(200).json(updatedUser)
@@ -103,11 +363,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         case "DELETE":
             try {
                 await prisma.appUserModel.delete({
-                    where: { id: user!.id },
-                    include: {
-                        communities: true,
-                        interests: true
-                    }
+                    where: { id: user!.id }
                 })
                 res.status(200)
             } catch (e) {

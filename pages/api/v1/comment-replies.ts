@@ -14,19 +14,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (req.method) {
         case "POST":
             try {
-                let { parentCommentId, comment } = req.body
+                let { commentId, commentReply } = req.body
                 const userId = user.id
 
                 let createdCommentReply = await prisma.commentReplyModel.create({
                     data: {
                         creatorId: userId,
-                        parentCommentId: parentCommentId,
-                        comment: comment,
+                        commentId: commentId,
+                        commentReply: commentReply,
                         likes: []
+                    },
+                    include: {
+                        creator: true
                     }
                 })
                 res.status(200).json(createdCommentReply)
             } catch (e) {
+                console.log(e)
                 res.status(500).json({ message: "Something has gone wrong when creating the reply of the comment of the user", error: e })
             }
             break
@@ -45,7 +49,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 let updatedCommentReply = await prisma.commentReplyModel.update({
                     where: { id },
-                    data: { likes }
+                    data: { likes },
+                    include: {
+                        creator: true
+                    }
                 })
                 res.status(200).json(updatedCommentReply)
             } catch (e) {
