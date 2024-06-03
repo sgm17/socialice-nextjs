@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             break
         case "POST":
             try {
-                const { name, description, image, placeName, completeAddress, communityId, startTimestamp, endTimestamp, latitude, longitude, price, priceWithoutDiscount, eventType } = req.body
+                const { name, description, image, placeName, completeAddress, communityId, startDate, endDate, latitude, longitude, price, priceWithoutDiscount, eventType } = req.body
 
                 let event = await prisma.eventModel.create({
                     data: {
@@ -63,8 +63,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         eventType: eventType,
                         popular: false,
                         highlights: { create: [] },
-                        startTimestamp: startTimestamp,
-                        endTimestamp: endTimestamp,
+                        startDate: new Date(startDate).toISOString(),
+                        endDate: new Date(endDate).toISOString(),
                     },
                     include: {
                         organizers: true,
@@ -96,12 +96,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 })
                 res.status(200).json(event)
             } catch (e) {
+                console.log(e)
                 res.status(500).json({ message: "Something has gone wrong when updating the event", error: e })
             }
             break
         case "PUT":
             try {
-                const { id, name, description, image, placeName, completeAddress, startTimestamp, endTimestamp, latitude, longitude, price, priceWithoutDiscount, eventType } = req.body
+                const { id, name, description, image, placeName, completeAddress, startDate, endDate, latitude, longitude, price, priceWithoutDiscount, eventType } = req.body
 
                 let event = await prisma.eventModel.update({
                     where: { id: id },
@@ -115,8 +116,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         priceWithoutDiscount: priceWithoutDiscount,
                         latitude: latitude,
                         longitude: longitude,
-                        startTimestamp: startTimestamp,
-                        endTimestamp: endTimestamp,
+                        startDate: startDate,
+                        endDate: endDate,
                         eventType: eventType
                     },
                     include: {
@@ -158,7 +159,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await prisma.eventModel.delete({
                     where: { id }
                 })
-                res.status(200)
+                res.status(200).json({ message: "ok" })
             } catch (e) {
                 res.status(500).json({ message: "Something has gone wrong when deleting the event", error: e })
             }

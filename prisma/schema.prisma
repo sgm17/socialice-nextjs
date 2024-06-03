@@ -30,7 +30,9 @@ model AppUserModel {
   replies    CommentReplyModel[]  @relation("UserCommentReplies")
   highlights HighlightModel[] @relation("EventHighlights")
   interests         InterestModel[] @relation("UserInterests")
+  balance           Float           @default(0.0)
   favourites        String[]
+  ticket            TicketModel[]        @relation("UserTicket")
   createdAt         DateTime             @default(now()) @map(name: "created_at")
   updatedAt         DateTime             @updatedAt @map(name: "updated_at")
 
@@ -95,8 +97,9 @@ model EventModel {
   popular           Boolean             @default(false)
   highlights        HighlightModel[]    @relation("EventHighlights")
   reports           String[]
-  startTimestamp    DateTime
-  endTimestamp      DateTime
+  ticket            TicketModel[]       @relation("EventTicket")        
+  startDate    DateTime
+  endDate      DateTime
   createdAt         DateTime             @default(now()) @map(name: "created_at")
   updatedAt         DateTime             @updatedAt @map(name: "updated_at")
 }
@@ -124,4 +127,13 @@ model CommentReplyModel {
   likes             String[]
   reports           String[]
   createdAt         DateTime             @default(now()) @map(name: "created_at")                 
+}
+
+model TicketModel {
+  id                String               @default(cuid()) @id
+  event             EventModel           @relation("EventTicket", fields: [eventId], references: [id])
+  eventId           String
+  user              AppUserModel         @relation("UserTicket", fields: [userId], references: [id])
+  userId            String
+  qrCode            String
 }

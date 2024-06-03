@@ -74,7 +74,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         }
                     }
                 });
-
                 res.status(200).json(updatedEvent);
             } catch (e) {
                 res.status(500).json({ message: "Something has gone wrong when updating the participants of the event", error: e })

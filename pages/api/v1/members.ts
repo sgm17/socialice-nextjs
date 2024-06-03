@@ -46,7 +46,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const updatedCommunity = await prisma.communityModel.update({
                     where: { id: communityId },
                     data: updateData,
-                    include: { members: true },
+                    include: {
+                        owner: true,
+                        members: true,
+                        category: true
+                    }
                 });
 
                 res.status(200).json(updatedCommunity);

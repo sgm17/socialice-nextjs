@@ -9,9 +9,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 let { eventId, username } = req.body
 
-                const newUser = await prisma.appUserModel.findUniqueOrThrow({
+                const newUser = await prisma.appUserModel.findUnique({
                     where: { username },
                 })
+
+                if (!newUser) return res.status(500).json({ message: "The user does not exist" })
 
                 const oldEvent = await prisma.eventModel.findUniqueOrThrow({
                     where: { id: eventId },

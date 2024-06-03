@@ -29,7 +29,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                     category: true
                                 }
                             },
-                            communities: true,
+                            communities: {
+                                include: {
+                                    owner: true,
+                                    members: true,
+                                    category: true
+                                }
+                            },
                             interests: true,
                             organizer: {
                                 include: {
@@ -109,7 +115,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                     category: true
                                 }
                             },
-                            communities: true,
+                            communities: {
+                                include: {
+                                    owner: true,
+                                    members: true,
+                                    category: true
+                                }
+                            },
                             interests: true,
                             organizer: {
                                 include: {
@@ -200,7 +212,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 category: true
                             }
                         },
-                        communities: true,
+                        communities: {
+                            include: {
+                                owner: true,
+                                members: true,
+                                category: true
+                            }
+                        },
                         interests: true,
                         organizer: {
                             include: {
@@ -292,7 +310,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 category: true
                             }
                         },
-                        communities: true,
+                        communities: {
+                            include: {
+                                owner: true,
+                                members: true,
+                                category: true
+                            }
+                        },
                         interests: true,
                         organizer: {
                             include: {

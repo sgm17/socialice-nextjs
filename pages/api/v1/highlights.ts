@@ -21,10 +21,98 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     data: {
                         eventId: eventId,
                         userId: userId,
-                        image: image
+                        image: image,
+                    },
+                    include: {
+                        user: {
+                            include: {
+                                createdCommunity: {
+                                    include: {
+                                        owner: true,
+                                        members: true,
+                                        category: true
+                                    }
+                                },
+                                communities: true,
+                                interests: true,
+                                organizer: {
+                                    include: {
+                                        organizers: true,
+                                        participants: true,
+                                        community: {
+                                            include: {
+                                                owner: true,
+                                                members: true,
+                                                category: true,
+                                            }
+                                        },
+                                        comments: {
+                                            include: {
+                                                creator: true,
+                                                replies: {
+                                                    include: {
+                                                        creator: true
+                                                    }
+                                                },
+                                                event: {
+                                                    select: { id: true }
+                                                }
+                                            }
+                                        },
+                                        highlights: {
+                                            include: { user: true },
+                                        }
+                                    }
+                                },
+                                events: {
+                                    include: {
+                                        organizers: true,
+                                        participants: true,
+                                        community: {
+                                            include: {
+                                                owner: true,
+                                                members: true,
+                                                category: true,
+                                            }
+                                        },
+                                        comments: {
+                                            include: {
+                                                creator: true,
+                                                replies: {
+                                                    include: {
+                                                        creator: true
+                                                    }
+                                                },
+                                                event: {
+                                                    select: { id: true }
+                                                }
+                                            }
+                                        },
+                                        highlights: {
+                                            include: { user: true },
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 })
                 res.status(200).json(highlightedImage)
+            } catch (e) {
+                res.status(500).json({ message: "Something has gone wrong when updating the highlighted images of the event", error: e })
+            }
+            break
+        case "DELETE":
+            try {
+                let { eventId, highlightId } = req.body
+
+                await prisma.highlightModel.delete({
+                    where: {
+                        eventId: eventId,
+                        id: highlightId,
+                    },
+                })
+                res.status(200).json({ message: "ok" })
             } catch (e) {
                 res.status(500).json({ message: "Something has gone wrong when updating the highlighted images of the event", error: e })
             }
