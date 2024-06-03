@@ -22,6 +22,10 @@ model AppUserModel {
   latitude          Float
   longitude         Float
   description       String?
+  conversationStarter ConversationModel[]   @relation("ConversationStarter")
+  conversationJoiner ConversationModel[]    @relation("ConversationJoiner")
+  messageSender      MessageModel[]         @relation("MessageSender")
+  messageReceiver    MessageModel[]         @relation("MessageReceiver")
   createdCommunity  CommunityModel?
   organizer        EventModel[]      @relation("EventOrganizers")
   events  EventModel[] @relation("EventUsers")
@@ -136,4 +140,24 @@ model TicketModel {
   user              AppUserModel         @relation("UserTicket", fields: [userId], references: [id])
   userId            String
   qrCode            String
+}
+
+model ConversationModel {
+  id                String          @default(cuid()) @id
+  userA             AppUserModel    @relation("ConversationStarter", fields: [userAId], references: [id], map: "userA_fkey")
+  userAId           String
+  userB             AppUserModel    @relation("ConversationJoiner", fields: [userBId], references: [id], map: "userB_fkey")
+  userBId           String
+  messages          MessageModel[]
+}
+
+model MessageModel {
+  id                String        @default(cuid()) @id
+  sender            AppUserModel  @relation("MessageSender", fields: [senderId], references: [id], map: "sender_fkey")
+  senderId          String
+  receiver          AppUserModel  @relation("MessageReceiver", fields: [receiverId], references: [id], map: "receiver_fkey")
+  receiverId        String
+  conversation      ConversationModel @relation(fields: [conversationId], references: [id], map: "conversation_fkey")
+  conversationId    String
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
 }
