@@ -30,6 +30,7 @@ model AppUserModel {
   organizer        EventModel[]      @relation("EventOrganizers")
   events  EventModel[] @relation("EventUsers")
   communities CommunityModel[]     @relation("UserCommunities")
+  communityMessages CommunityMessageModel[] @relation("CommunityMessageUser")
   comments          CommentModel[]       @relation("UserComments")
   replies    CommentReplyModel[]  @relation("UserCommentReplies")
   highlights HighlightModel[] @relation("EventHighlights")
@@ -140,6 +141,7 @@ model TicketModel {
   user              AppUserModel         @relation("UserTicket", fields: [userId], references: [id])
   userId            String
   qrCode            String
+  scanned           Boolean             @default(false)
 }
 
 model ConversationModel {
@@ -153,6 +155,7 @@ model ConversationModel {
 
 model MessageModel {
   id                String        @default(cuid()) @id
+  message           String
   sender            AppUserModel  @relation("MessageSender", fields: [senderId], references: [id], map: "sender_fkey")
   senderId          String
   receiver          AppUserModel  @relation("MessageReceiver", fields: [receiverId], references: [id], map: "receiver_fkey")
@@ -160,4 +163,20 @@ model MessageModel {
   conversation      ConversationModel @relation(fields: [conversationId], references: [id], map: "conversation_fkey")
   conversationId    String
   createdAt         DateTime      @default(now()) @map(name: "created_at")
+}
+
+model CommunityChatModel {
+  id                String            @default(cuid()) @id
+  communityId       String            @unique
+  messages          CommunityMessageModel[] @relation("CommunityMessages")
+}
+
+model CommunityMessageModel {
+  id                String            @default(cuid()) @id
+  message           String
+  user              AppUserModel      @relation("CommunityMessageUser", fields: [userId], references: [id], map: "community_message_user_fkey")
+  userId            String
+  chat              CommunityChatModel @relation("CommunityMessages", fields: [chatId], references: [id])
+  chatId            String
+  createdAt         DateTime          @default(now()) @map(name: "created_at")
 }
