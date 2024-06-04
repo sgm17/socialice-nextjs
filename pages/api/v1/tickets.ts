@@ -64,6 +64,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         user: { connect: { id: user.id } },
                         event: { connect: { id: eventId } },
                         qrCode: qrCode,
+                    },
+                    include: {
+                        event: {
+                            include: {
+                                organizers: true,
+                                participants: true,
+                                community: {
+                                    include: {
+                                        owner: true,
+                                        members: true,
+                                        category: true,
+                                    }
+                                },
+                                comments: {
+                                    include: {
+                                        creator: true,
+                                        replies: {
+                                            include: {
+                                                creator: true
+                                            }
+                                        },
+                                        event: {
+                                            select: { id: true }
+                                        }
+                                    }
+                                },
+                                highlights: {
+                                    include: { user: true },
+                                }
+                            }
+                        }
                     }
                 })
                 res.status(200).json(ticket)
@@ -71,6 +102,53 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 res.status(500).json({ message: "Something has gone wrong when retrieving the tickets", error: e })
             }
             break
+        case "PUT":
+            try {
+                const { ticketId } = req.body
+
+                let updatedTicket = await prisma.ticketModel.update({
+                    where: {
+                        id: ticketId
+                    },
+                    data: {
+                        scanned: true
+                    },
+                    include: {
+                        event: {
+                            include: {
+                                organizers: true,
+                                participants: true,
+                                community: {
+                                    include: {
+                                        owner: true,
+                                        members: true,
+                                        category: true,
+                                    }
+                                },
+                                comments: {
+                                    include: {
+                                        creator: true,
+                                        replies: {
+                                            include: {
+                                                creator: true
+                                            }
+                                        },
+                                        event: {
+                                            select: { id: true }
+                                        }
+                                    }
+                                },
+                                highlights: {
+                                    include: { user: true },
+                                }
+                            }
+                        }
+                    }
+                })
+                res.status(200).json(updatedTicket)
+            } catch (e) {
+                res.status(500).json({ message: "Something has gone wrong when updating the tickets", error: e })
+            }
         default:
             break
     }

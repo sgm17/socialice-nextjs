@@ -142,6 +142,8 @@ model TicketModel {
   userId            String
   qrCode            String
   scanned           Boolean             @default(false)
+  createdAt         DateTime             @default(now()) @map(name: "created_at")
+  updatedAt         DateTime             @updatedAt @map(name: "updated_at")
 }
 
 model ConversationModel {
@@ -151,17 +153,18 @@ model ConversationModel {
   userB             AppUserModel    @relation("ConversationJoiner", fields: [userBId], references: [id], map: "userB_fkey")
   userBId           String
   messages          MessageModel[]
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
 }
 
 model MessageModel {
   id                String        @default(cuid()) @id
-  message           String
   sender            AppUserModel  @relation("MessageSender", fields: [senderId], references: [id], map: "sender_fkey")
   senderId          String
   receiver          AppUserModel  @relation("MessageReceiver", fields: [receiverId], references: [id], map: "receiver_fkey")
   receiverId        String
   conversation      ConversationModel @relation(fields: [conversationId], references: [id], map: "conversation_fkey")
   conversationId    String
+  message           String
   createdAt         DateTime      @default(now()) @map(name: "created_at")
 }
 
@@ -173,10 +176,10 @@ model CommunityChatModel {
 
 model CommunityMessageModel {
   id                String            @default(cuid()) @id
-  message           String
   user              AppUserModel      @relation("CommunityMessageUser", fields: [userId], references: [id], map: "community_message_user_fkey")
   userId            String
   chat              CommunityChatModel @relation("CommunityMessages", fields: [chatId], references: [id])
   chatId            String
+  message           String
   createdAt         DateTime          @default(now()) @map(name: "created_at")
 }
