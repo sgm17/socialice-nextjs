@@ -186,7 +186,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 }
                             }
                         },
-                        messages: true
+                        messages: {
+                            include: {
+                                sender: true,
+                                receiver: true
+                            }
+                        }
                     }
                 })
                 res.status(200).json(conversations)
