@@ -12,23 +12,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
 
     switch (req.method) {
-        case "POST":
+        case "PUT":
             try {
-                const { chatId, message } = req.body
                 const userId = user.id
+                const { cloudToken } = req.body
 
-                let communityMessage = await prisma.communityMessageModel.create({
-                    data: {
-                        userId: userId,
-                        chatId: chatId,
-                        message: message
-                    }
+                await prisma.cloudTokenModel.update({
+                    where: { userId: userId },
+                    data: { cloudToken },
                 })
-                res.status(200).json(communityMessage)
+                res.status(200).json({ message: "ok" })
             } catch (e) {
                 console.log(e)
-                res.status(500).json({ message: "Something has gone wrong when creating a community message", error: e })
+                res.status(500).json({ message: "Something has gone wrong when creating the reply of the comment of the user", error: e })
             }
+            break
         default:
             break
     }

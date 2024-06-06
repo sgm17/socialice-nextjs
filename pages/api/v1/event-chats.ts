@@ -10,19 +10,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             id: "1"
         },
         include: {
-            communities: true
+            events: true
         }
     })
 
     switch (req.method) {
         case "GET":
             try {
-                let communities = user.communities
+                let events = user.events
 
-                let communityChats = await prisma.communityChatModel.findMany({
+                let eventChats = await prisma.eventChatModel.findMany({
                     where: {
-                        communityId: {
-                            in: communities.map(({ id }) => id)
+                        eventId: {
+                            in: events.map(({ id }) => id)
                         }
                     },
                     include: {
@@ -110,7 +110,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         }
                     }
                 })
-                res.status(200).json(communityChats)
+                res.status(200).json(eventChats)
             } catch (e) {
                 console.log(e)
                 res.status(500).json({ message: "Something has gone wrong when retrieving the community chats", error: e })
@@ -118,11 +118,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             break
         case "POST":
             try {
-                const { communityId } = req.body
+                const { eventId } = req.body
 
-                let communityChat = await prisma.communityChatModel.create({
+                let eventChat = await prisma.eventChatModel.create({
                     data: {
-                        communityId
+                        eventId
                     },
                     include: {
                         messages: {
@@ -209,7 +209,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         }
                     }
                 })
-                res.status(200).json(communityChat)
+                res.status(200).json(eventChat)
             } catch (e) {
                 console.log(e)
                 res.status(500).json({ message: "Something has gone wrong when retrieving the community chats", error: e })
